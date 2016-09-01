@@ -15,6 +15,7 @@
         />
 
     <Button
+        android:id="@+id/joke_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/instructions_text_view"
@@ -22,15 +23,18 @@
         android:onClick="tellJoke"
 
         />
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id">
-    </com.google.android.gms.ads.AdView>
+        android:layout_centerHorizontal="true" />
+    <ViewStub android:id="@+id/stub"
+              android:inflatedId="@+id/adView"
+              android:layout="@layout/admob_stub"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
 
+              android:layout_alignParentBottom="true"
+    />
 </RelativeLayout>

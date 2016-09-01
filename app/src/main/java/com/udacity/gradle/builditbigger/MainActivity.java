@@ -1,21 +1,44 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.ProgressBar;
+
+import com.example.JokeProvider;
+
+import org.sluman.jokedisplay.JokeDisplayActivity;
 
 
-public class MainActivity extends ActionBarActivity {
-
+public class MainActivity extends ActionBarActivity
+        implements EndpointsAsyncTask.PostExecuteListener,
+        AdProvider.NextViewListener
+{
+    private AdProvider mAdProvider;
+    private ProgressBar mSpinner;
+    public static String JOKE_EXTRA = "joke_extra";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mSpinner=(ProgressBar)findViewById(R.id.progressBar1);
+        mSpinner.setVisibility(View.GONE);
+        mAdProvider = AdProvider.getInstance(this);
+        mAdProvider.loadInterstitial(this);
     }
 
+    @Override
+    public void onRenderNextView(String joke) {
+        Intent intent = new Intent(this, JokeDisplayActivity.class);
+        intent.putExtra(JOKE_EXTRA, joke);
+        startActivity(intent);
+        mSpinner.setVisibility(View.GONE);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,8 +63,15 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void tellJoke(View view){
-        Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
+        mSpinner.setVisibility(View.VISIBLE);
+        new EndpointsAsyncTask().execute(this);
+
     }
 
+
+    @Override
+    public void onPostExecute(String joke) {
+        mAdProvider.showInterstitial(joke);
+    }
 
 }
