@@ -29,6 +29,9 @@ android {
             applicationId 'com.udacity.gradle.builditbigger.paid'
         }
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -42,6 +45,25 @@ dependencies {
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
 
-testTask {
-    backend:build
+
+task runTests (dependsOn: ":app:runAppEngine") {
+    doLast {
+        println "check complete"
+
+    }
 }
+
+task runAppEngine (dependsOn: ":backend:appengineRun") {
+    project(":backend").afterEvaluate { backend ->
+        backend.extensions.appengine.daemon = true
+    }
+    doLast {
+        println "backend started"
+    }
+}
+
+runAppEngine.finalizedBy ":app:check"
+
+
+
+runTests.finalizedBy ":backend:appengineStop"
